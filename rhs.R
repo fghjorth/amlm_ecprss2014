@@ -24,7 +24,7 @@ pefr.long<-data.frame(id=rep(pefr$id,2),wp=c(pefr$wp1,pefr$wp2),wm=c(pefr$wm1,pe
 
 #2.5.2
 require(lme4)
-vim1<-lmer(wm~1+(1|id),data=pefr.long)
+vim1<-lmer(wm~1+(1|id),data=pefr.long,REML=F)
 
 summary(vim1)
 
@@ -41,6 +41,33 @@ require(lmerTest)
 
 rand(vim1) #likelihood ratio test
 
-anova(lm(wm~factor(id),data=pefr.long),lm(wm~1,data=pefr.long)) #F-test
+summary(fem1<-lm(wm~factor(id),data=pefr.long))
+
+anova(fem1,lm(wm~1,data=pefr.long)) #F-test
+
+
+#2.9
+
+pefr.long$occ2<-ifelse(pefr.long$occasion==2,1,0)
+
+summary(cem1<-lmer(wm~occ2+(1|id),data=pefr.long,REML=F)) #crossed effects model
+
+#2.10.3
+
+se.bf<-sqrt(vim1.theta/length(pefr.long$id)) #fixed effects model se
+
+se.ols<-summary(lm(wm~1,data=pefr.long))$coefficients[1,2] #ols se
+
+require(arm)
+se.b<-se.fixef(vim1) #RE model se
+
+barplot(c(se.bf,se.ols,se.b),names=c("SE(B.F)","SE(B.OLS)","SE(B)"))
+
+#2.11.1
+
+ranef(vim1) #ML intercept estimates 
+
+
+
 
 
