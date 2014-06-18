@@ -67,7 +67,28 @@ barplot(c(se.bf,se.ols,se.b),names=c("SE(B.F)","SE(B.OLS)","SE(B)"))
 
 ranef(vim1) #ML intercept estimates 
 
+#2.11.2
 
+(vim1.ebr<-vim1.psi/(vim1.psi+vim1.theta/2)) # empirical bayes shrinkage factor R
 
+ebests<-ranef(vim1)$id*vim1.ebr
 
+ebests
+
+### Chapter 3
+rm(list=(ls(all=T)))
+
+sm<-read.dta("http://www.stata-press.com/data/mlmus3/smoking.dta")
+
+#3.4.1
+summary(vim2<-lmer(birwt~smoke+male+mage+hsgrad+somecoll+collgrad+married+black+kessner2+kessner3+novisit+pretri2+pretri3+(1|momid),data=sm,REML=F))
+
+#3.5
+summary(vim2null<-lmer(birwt~1+(1|momid),data=sm,REML=F))
+
+vim2totvar<-attr(summary(vim2)$varcor$momid,"stddev")^2+attr(summary(vim2)$varcor,"sc")^2
+
+vim2nulltotvar<-attr(summary(vim2null)$varcor$momid,"stddev")^2+attr(summary(vim2null)$varcor,"sc")^2
+
+(vim2rsq<-(vim2totvar-vim2nulltotvar)/vim2nulltotvar)
 
