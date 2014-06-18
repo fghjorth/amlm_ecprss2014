@@ -92,3 +92,18 @@ vim2nulltotvar<-attr(summary(vim2null)$varcor$momid,"stddev")^2+attr(summary(vim
 
 (vim2rsq<-(vim2totvar-vim2nulltotvar)/vim2nulltotvar)
 
+#3.7.5
+
+as.numeric(sm$smoke)
+sm$mn_smok<-NA
+sm$dev_smok<-NA
+momids<-unique(sm$momid)
+
+mean(as.numeric(sm$smoke[sm$momid==sm$momid[1]])-1,na.rm=T)
+
+for (i in 1:nrow(sm)){
+  sm$mn_smok[i]<-mean(as.numeric(sm$smoke[sm$momid==sm$momid[i]])-1,na.rm=T)
+  sm$dev_smok[i]<-as.numeric(sm$smoke[i])-1-sm$mn_smok[i]
+}
+
+summary(vim3<-lmer(birwt~dev_smok+mn_smok+male+mage+hsgrad+somecoll+collgrad+married+black+kessner2+kessner3+novisit+pretri2+pretri3+(1|momid),data=sm,REML=F))
