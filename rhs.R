@@ -128,3 +128,61 @@ ggplot(gc,aes(x=lrt,y=gcse)) +
 summary(vim3<-lmer(gcse~lrt+(1|school),data=gc,REML=F))
 
 vim3preds<-predict(vim3)
+
+summary(vivsm3<-lmer(gcse~lrt+(1+lrt|school),data=gc,REML=F)) #random coefficients + random intercept model
+
+rand(vivsm3) # naïve likelihood ratio test
+
+#plot random intercept vs random coefficient model
+ris<-as.data.frame(ranef(vim3)$school)
+rcs<-as.data.frame(ranef(vivsm3)$school)
+m3preds.ri<-as.data.frame(cbind(gc=seq(from=-30,to=30,by=20),matrix(nrow=4,ncol=65)))
+m3preds.rc<-as.data.frame(cbind(gc=seq(from=-30,to=30,by=20),matrix(nrow=4,ncol=65)))
+for (j in 2:ncol(m3preds.ri)){
+  for (i in 1:nrow(m3preds.ri)){
+    m3preds.ri[i,j]<-(.0238+ris[j-1,1])+.5633*m3preds.ri$gc[i]
+  }
+}
+m3preds.ri<-melt(m3preds.ri,id.vars="gc")
+m3preds.ri$mtype<-"ri"
+for (j in 2:ncol(m3preds.rc)){
+  for (i in 1:nrow(m3preds.rc)){
+    m3preds.rc[i,j]<-(.0238+rcs[j-1,1])+(.5633+rcs[j-1,2])*m3preds.rc$gc[i]
+  }
+}
+m3preds.rc<-melt(m3preds.rc,id.vars="gc")
+m3preds.rc$mtype<-"rc"
+
+m3preds.bytype<-as.data.frame(rbind(m3preds.ri,m3preds.rc))
+
+ggplot(m3preds.bytype,aes(x=gc,y=value,group=variable)) +
+  geom_line(alpha=.5) +
+  facet_grid(.~mtype) +
+  theme_bw()
+
+### Chapter 10
+rm(list=(ls(all=T)))
+wlf<-read.dta("http://www.stata-press.com/data/mlmus3/womenlf.dta")
+
+table(as.numeric(wlf$workstat))
+
+wlf$workstat01<-ifelse(as.numeric(wlf$workstat)>1,1,0)
+
+summary(logit1<-glm(workstat01~husbinc+chilpres,data=wlf,family=binomial())) #logit model
+
+exp(coef(logit1)) #odds ratios
+
+#10.3
+rm(list=(ls(all=T)))
+tn<-read.dta("http://www.stata-press.com/data/mlmus3/toenail.dta")
+
+summary(logit2<-glm(outcome~treatment+month+treatment:month,data=tn,family=binomial())) #naïve ols
+
+#10.5
+
+require(rms)
+robcov(logit3<-lrm(outcome~treatment+month+treatment:month,data=tn,x=T,y=T),cluster=tn$patient) #clustered standard errors
+
+#10.7
+
+summary(logit4<-glmer(outcome~treatment+month+treatment:month+(1|patient),data=tn,family=binomial()))
