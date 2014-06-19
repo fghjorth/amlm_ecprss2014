@@ -107,3 +107,24 @@ for (i in 1:nrow(sm)){
 }
 
 summary(vim3<-lmer(birwt~dev_smok+mn_smok+male+mage+hsgrad+somecoll+collgrad+married+black+kessner2+kessner3+novisit+pretri2+pretri3+(1|momid),data=sm,REML=F))
+
+### Chapter 4
+rm(list=(ls(all=T)))
+gc<-read.dta("http://www.stata-press.com/data/mlmus3/gcse.dta")
+
+summary(lm(gcse~lrt,data=gc[gc$school==1,]))
+
+ggplot(subset(gc,school==1),aes(x=lrt,y=gcse)) +
+  geom_point() +
+  geom_smooth(method="lm",alpha=0,linetype=2) +
+  theme_bw()
+
+ggplot(gc,aes(x=lrt,y=gcse)) +
+  geom_point(alpha=.5) +
+  geom_smooth(method="lm",alpha=0,linetype=2) +
+  theme_bw() +
+  facet_wrap(~school)
+
+summary(vim3<-lmer(gcse~lrt+(1|school),data=gc,REML=F))
+
+vim3preds<-predict(vim3)
