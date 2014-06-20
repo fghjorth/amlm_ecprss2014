@@ -1,6 +1,6 @@
 # Reproducing Rabe-Hesketh & Skrondal (RHS) in R
 
-# Ch 2
+# Chapter 2
 
 #2.3
 require(foreign)
@@ -186,3 +186,17 @@ robcov(logit3<-lrm(outcome~treatment+month+treatment:month,data=tn,x=T,y=T),clus
 #10.7
 
 summary(logit4<-glmer(outcome~treatment+month+treatment:month+(1|patient),data=tn,family=binomial()))
+
+
+### Chapter 8
+
+require(foreign)
+pefr<-read.dta("http://www.stata-press.com/data/mlmus3/pefr.dta")
+
+pefr.long<-data.frame(id=rep(pefr$id,2),wp=c(pefr$wp1,pefr$wp2),wm=c(pefr$wm1,pefr$wm2),occasion=c(rep(1,nrow(pefr)),rep(2,nrow(pefr))))
+require(reshape2)
+pefr.long2<-melt(pefr.long,id.vars=c("id","occasion"),variable.name="meth",value.name="w")
+require(lme4)
+summary(nvim1<-lmer(w~1+(1|id/meth),data=pefr.long2,REML=F)) #nested model - highest level first
+
+
