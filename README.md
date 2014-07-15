@@ -1,4 +1,4 @@
 
 ### Reproduction files for ECPR Summer School course: Applied Multilevel Modeling
 
-These files provide syllabus, R script and STATA do file to reproduce the assigned readings in Rabe-Hesketh & Skrondal (2012)
+This repository provides solutions for the STATA exercises in the ECPR Summer School course "Applied Multilevel Modeling", University of Ljubljana, Slovenia, 24 July to 9 August 2014
