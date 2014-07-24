@@ -72,7 +72,10 @@ esttab fedummy remledummy hybridCM hybridCMC
 
 clear
 
-use ESS5_id-pweight n1_gdp_2009 using "C:\Users\fh\Dropbox\ECPRmultilevel\Day1\ESSMDW5e2_F1", clear
+//use ESS5_id-pweight n1_gdp_2009 using "C:\Users\fh\Dropbox\ECPRmultilevel\Day1\ESSMDW5e2_F1", clear
+
+use ESS5_id-pweight n1_gdp_2009 using "/Users/frederikhjorth/Dropbox/ECPRmultilevel/Day1/ESSMDW5e2_F1", clear
+
 
 codebook stflife hinctnta agea maritalb mnactic eisced NUTS1
 
